@@ -3,14 +3,14 @@
 The goal of this repository is to provide material for new users of the TREXIO library in general 
 and of the Python API in particular.
 
-To download a local copy of the `.ipynb` files, you can either
-[clone this repository](https://docs.github.com/en/github/creating-cloning-and-archiving-repositories/cloning-a-repository)
-or navigate to any of the documents listed below and download it individually.
+To obtain a local copy of the `.ipynb` files, you can
+[clone this repository](https://docs.github.com/en/github/creating-cloning-and-archiving-repositories/cloning-a-repository) 
+and manually convert notebooks using, e.g. `jupytext --to notebook tutorial_benzene.md` command.
 
 
 ## Content
 
-1. [Learn how to write and read data using TREXIO API](notebooks/tutorial_benzene.md): the basics.
+1. [Learn how to write and read data using TREXIO API](notebooks/tutorial_benzene.md): the basics demonstrated by writing and reading some data corresponding to benzene molecule.
 
 
 ### Why Jupyter Notebooks?
