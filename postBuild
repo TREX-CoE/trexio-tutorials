@@ -1,0 +1,14 @@
+#!/bin/bash
+
+set -e 
+
+# convert all notebooks from .md into .ipynb format
+cd notebooks
+
+for file in *.md
+do
+  if [ -f "${file}" ]; then
+    jupytext --to notebook ${file}
+  fi
+done
+
