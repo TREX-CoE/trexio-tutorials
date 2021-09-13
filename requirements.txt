@@ -1,0 +1,5 @@
+# for the tutorials
+numpy
+trexio
+# for notebooks in Markdown format
+jupytext
