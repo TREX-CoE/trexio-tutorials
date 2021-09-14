@@ -1,4 +1,7 @@
+
 # TREXIO tutorials
+
+[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/TREX-CoE/trexio-tutorials/HEAD)
 
 The goal of this repository is to provide material for new users of the TREXIO library in general 
 and of the Python API in particular.
