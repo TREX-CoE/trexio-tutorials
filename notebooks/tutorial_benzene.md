@@ -15,7 +15,7 @@ jupyter:
 # TREXIO Tutorial
 
 
-This interactive Tutorial covers some basic use cases of the TREXIO library based on the Python API. At this point, it is assumed that the TREXIO Python package has been sucessfully installed on the user machine or in the virtual environment. If this is not the case, feel free to follow the [installation guide](https://github.com/TREX-CoE/trexio/blob/master/python/README.md).
+This interactive Tutorial covers some basic use cases of the TREXIO library based on the Python API. At this point, it is assumed that the TREXIO Python package has been successfully installed on the user machine or in the virtual environment. If this is not the case, feel free to follow the [installation guide](https://github.com/TREX-CoE/trexio/blob/master/python/README.md).
 
 
 ## Importing TREXIO
@@ -27,10 +27,10 @@ First of all, let's import the TREXIO package.
 try:
     import trexio
 except ImportError:
-    raise Exception("Unable to import trexio. Please check that trexio is properly instaled.")
+    raise Exception("Unable to import trexio. Please check that trexio is properly installed.")
 ```
 
-If no error occurs, then it means that the TREXIO package has been sucessfully imported. Within the current import, TREXIO attributes can be accessed using the corresponding `trexio.attribute` notation. If you prefer to bound a shorter name to the imported module (as commonly done by the NumPy users with `import numpy as np`), this is also possible. To do so, replace `import trexio` with `import trexio as tr` for example. To learn more about importing modules, see the corresponding page of the [Python documentation](https://docs.python.org/3/tutorial/modules.html#more-on-modules).
+If no error occurs, then it means that the TREXIO package has been successfully imported. Within the current import, TREXIO attributes can be accessed using the corresponding `trexio.attribute` notation. If you prefer to bound a shorter name to the imported module (as commonly done by the NumPy users with `import numpy as np`), this is also possible. To do so, replace `import trexio` with `import trexio as tr` for example. To learn more about importing modules, see the corresponding page of the [Python documentation](https://docs.python.org/3/tutorial/modules.html#more-on-modules).
 
 
 ## Creating a new TREXIO file
@@ -160,7 +160,7 @@ Let's take advantage of using NumPy arrays with fixed precision for floating poi
 try:
     import numpy as np
 except ImportError:
-    raise Exception("Unable to import numpy. Please check that numpy is properly instaled.")
+    raise Exception("Unable to import numpy. Please check that numpy is properly installed.")
 ```
 
 You can now convert the previously defined `coords` list into a numpy array with fixed `float64` type as follows
