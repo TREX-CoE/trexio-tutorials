@@ -15,7 +15,7 @@ jupyter:
 # TREXIO Tutorial
 
 
-This interactive Tutorial covers some basic use cases of the TREXIO library based on the Python API. At this point, it is assumed that the TREXIO Python package has been successfully installed on the user machine or in the virtual environment. If this is not the case, feel free to follow the [installation guide](https://github.com/TREX-CoE/trexio/blob/master/python/README.md).
+This tutorial covers some basic use cases of the TREXIO library based on the Python API. At this point, it is assumed that the TREXIO Python package has been successfully installed on the user machine or in the virtual environment. If this is not the case, feel free to follow the [installation guide](https://github.com/TREX-CoE/trexio/blob/master/python/README.md).
 
 
 ## Importing TREXIO
@@ -69,7 +69,7 @@ This creates an instance of the `trexio.File` class, which we refer to as `demo_
 Prior to any work with TREXIO library, we highly recommend users to read about [TREXIO internal configuration](https://trex-coe.github.io/trexio/trex.html), which explains the structure of the wavefunction file. The reason is that TREXIO API has a naming convention, which is based on the groups and variables names that are pre-defined by the developers. In this Tutorial, we will only cover contents of the `nucleus` group. Note that custom groups and variables can be added to the TREXIO API.
 
 
-In this Tutorial, we consider benzene molecule (C6H6) as an example. Since benzene has 12 atoms, let's specify it in the previously created `demo_file`. In order to do so, one has to call `trexio.write_nucleus_num` function, which accepts an instance of the `trexio.File` class as a first argument and an `int` value corresponding to the number of nuclei as a second argument.
+In this tutorial, we consider benzene molecule (C6H6) as an example. Since benzene has 12 atoms, let's specify it in the previously created `demo_file`. In order to do so, one has to call `trexio.write_nucleus_num` function, which accepts an instance of the `trexio.File` class as a first argument and an `int` value corresponding to the number of nuclei as a second argument.
 
 ```python
 nucleus_num = 12
@@ -80,7 +80,7 @@ trexio.write_nucleus_num(demo_file, nucleus_num)
 ```
 
 In fact, all API functions that contain `write_` prefix can be used in a similar way. 
-Variables that contain `_num` suffix are important part of the TREXIO file because some of them define dimensions of arrays. For example, `nucleus_num` variable corresponds to the number of atoms, which will be internally used to write/read the `nucleus_coord` array of nuclear coordinates. In order for TREXIO files to be self-consistent, overwriting num-suffixed variables is currently disabled.
+Variables that contain `_num` suffix (or `dim` type) are important part of the TREXIO file because some of them define dimensions of arrays. For example, `nucleus_num` variable corresponds to the number of atoms, which will be internally used to write/read the `nucleus_coord` array of nuclear coordinates. In order for TREXIO files to be self-consistent, the data in the file cannot be overwritten.
 
 
 The number of atoms is not sufficient to define a molecule. Let's first create a list of nuclear charges, which correspond to benzene. 
@@ -175,7 +175,7 @@ TREXIO functions that write numerical arrays accept both lists and numpy arrays 
 trexio.write_nucleus_coord(demo_file, coords_np)
 ```
 
-Congratulations, you have just completed the `nucleus` section of the TREXIO file for benzene molecule! Note that TREXIO API is rather permissive and do not impose any strict ordering on the I/O operations. The only requirement is that dimensioning (`_num` suffixed) variables have to be written in the file **before** writing arrays that depend on these variables. For example, attempting to write `nucleus_charge` or `nucleus_coord` fails if `nucleus_num` has not been written.
+Congratulations, you have just completed the `nucleus` section of the TREXIO file for benzene molecule! Note that TREXIO API is rather permissive and do not impose any strict ordering on the I/O operations. The only requirement is that dimensioning (see `dim` type) attributes have to be written in the file **before** writing arrays that depend on these variables. For example, attempting to write `nucleus_charge` or `nucleus_coord` fails if `nucleus_num` has not been written.
 
 
 ### TREXIO error handling
@@ -190,10 +190,10 @@ except trexio.Error as e:
     print(f"TREXIO error message: {e.message}")
 ```
 
-The error message says **Invalid argument 2**, which indicates that the user-provided value `-256` is not valid.
+The error message says **Invalid (negative or 0) dimension**, which indicates that the user-provided value `-256` is not valid.
 
 
-As mentioned before, `_num`-suffixed variables cannot be overwritten in the file. But what happens if you accidentally attempt to do so? Let's have a look at the `write_nucleus_num` function as an example:
+As mentioned before, the data in the TREXIO file cannot be overwritten. But what happens if you accidentally attempt to do so? Let's have a look at the `write_nucleus_num` function as an example:
 
 ```python
 try:
