@@ -1,5 +1,5 @@
 # for the tutorials
 numpy
-trexio
+trexio>=1.0.0
 # for notebooks in Markdown format
 jupytext
