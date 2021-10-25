@@ -60,7 +60,7 @@ We are now ready to create a new TREXIO file:
 demo_file = trexio.File(filename, mode='w', back_end=trexio.TREXIO_HDF5)
 ```
 
-This creates an instance of the `trexio.File` class, which we refer to as `demo_file` in this tutorial. You can check that the corresponding file called `benzene_demo.h5` exists in the root directory. It is now open for writing as indicated by the user-supplied argument `mode='w'`. The file has been initiated using `TREXIO_HDF5` back end and will be accessed accordingly from now on. The information about back end is stored internally by TREXIO, which means that there is no need to specify it every time the I/O operation is performed. If the file named `benzene_demo.h5` already exists, then it is re-opened for writing (and not truncated to prevent data loss).
+This creates an instance of the `trexio.File` class, which we refer to as `demo_file` in this tutorial. You can check that the corresponding file called `benzene_demo.h5` exists in the root directory. It is now open for writing as indicated by the user-supplied argument `mode='w'`. The file has been initiated using the `TREXIO_HDF5` back end and will be accessed accordingly from now on. The information about back end is stored internally by TREXIO, which means that there is no need to specify it every time the I/O operation is performed. If the file named `benzene_demo.h5` already exists, then it is re-opened for writing (and not truncated to prevent data loss).
 
 
 ## Writing data in the TREXIO file
@@ -181,11 +181,11 @@ Congratulations, you have just completed the `nucleus` section of the TREXIO fil
 ### TREXIO error handling
 
 
-TREXIO Python API provides the `trexio.Error` class which simplifies exception handling in the Python scripts. This class wraps up TREXIO return codes and propagates them all the way from the C back end to the Python front end. Let's try to write a negative number of basis set shells `basis_num` in the TREXIO file.
+TREXIO Python API provides the `trexio.Error` class which simplifies exception handling in the Python scripts. This class wraps up TREXIO return codes and propagates them all the way from the C back end to the Python front end. Let's try to write a negative number of basis set shells `basis_shell_num` in the TREXIO file.
 
 ```python
 try:
-    trexio.write_basis_num(demo_file, -256)
+    trexio.write_basis_shell_num(demo_file, -256)
 except trexio.Error as e:
     print(f"TREXIO error message: {e.message}")
 ```
@@ -215,22 +215,6 @@ if not trexio.has_nucleus_num:
 TREXIO functions with `has_` prefix return `True` if the corresponding variable exists and `False` otherwise.
 
 
-What about writing arrays? Let's try to write an list of 48 nuclear indices instead of 12
-
-```python
-indices = [i for i in range(nucleus_num*4)]
-```
-
-```python
-try:
-    trexio.write_basis_nucleus_index(demo_file, indices)
-except trexio.Error as e:
-    print(f"TREXIO error message: {e.message}")
-```
-
-According to the TREX configuration file, `nucleus_index` attribute of a `basis` group is supposed to have `[nucleus_num]` elements. In the example above, we have tried to write 4 times more elements, which might lead to memory and/or file corruption. Luckily, TREXIO internally checks the array dimensions and returns an error in case of inconsistency.
-
-
 ## Closing the TREXIO file
 
 
@@ -252,7 +236,7 @@ First, let's try to open an existing TREXIO file in read-only mode. This can be 
 demo_file_r = trexio.File(filename, mode='r', back_end=trexio.TREXIO_HDF5)
 ```
 
-When reading data from the TREXIO file, the only required argument is a previously created instance of `trexio.File` class. In our case, it is `demo_file_r`. TREXIO functions with `read_` prefix return the desired variable as an output. For example, `nucleus_num` value can be read from the file as follows
+When reading data from the TREXIO file, the only required argument is a previously created instance of the `trexio.File` class. In our case, it is `demo_file_r`. TREXIO functions with `read_` prefix return the desired variable as an output. For example, `nucleus_num` value can be read from the file as follows
 
 ```python
 nucleus_num_r = trexio.read_nucleus_num(demo_file_r)
@@ -265,7 +249,7 @@ print(f"nucleus_num from {filename} file ---> {nucleus_num_r}")
 The function call assigns `nucleus_num_r` to 12, which is consistent with the number of atoms in benzene that we wrote in the previous section.
 
 
-All calls to functions that read data can be done in a very similar way. The key point here is a function name, which in turn defines the output format. Hopefully by now you got used to the TREXIO naming convention and the contents of the `nucleus` group. Which function would you call to read a `point_group` attribute of the `nucleus` group? What type does it return? See the answer below:
+All calls to functions that read data can be done in a very similar way. The key point here is the function name, which in turn defines the output format. Hopefully by now you got used to the TREXIO naming convention and the contents of the `nucleus` group. Which function would you call to read a `point_group` attribute of the `nucleus` group? What type does it return? See the answer below:
 
 ```python
 point_group_r = trexio.read_nucleus_point_group(demo_file_r)
@@ -306,7 +290,7 @@ This makes sense, isn't it? We have written a `list` of nuclear labels and have 
 print(f"nucleus_charge return type: {type(charges_r)}")
 ```
 
-Looks like `trexio.read_nucleus_charge` function returns a `numpy.ndarray` even though we have provided a python-ic `list` to `trexio.write_nucleus_charge` in the previous section. Why is it so? As has been mentioned before, TREXIO Python API internally relies on the use of the NumPy package to communicate arrays of `float`-like or `int`-like values. This prevents some memory leaks and grants additional flexibility to the API. What kind of flexibility? Check this out:
+Looks like the `trexio.read_nucleus_charge` function returns a `numpy.ndarray` even though we have provided a python-ic `list` to `trexio.write_nucleus_charge` in the previous section. Why is it so? As has been mentioned before, the TREXIO Python API internally relies on the use of the NumPy package to communicate arrays of `float`-like or `int`-like values. This prevents some memory leaks and grants additional flexibility to the API. What kind of flexibility? Check this out:
 
 ```python
 print(f"return dtype in NumPy notation: ---> {charges_r.dtype}")
@@ -352,4 +336,4 @@ if trexio.has_nucleus_coord(demo_file_r):
 ## Conclusion
 
 
-In this Tutorial, you have created a TREXIO file using HDF5 back end and have written the number of atoms, point group, nuclear charges, labels and coordinates, which correspond to benzene molecule. You have also learned how to read this data back from the TREXIO file and how to handle some TREXIO errors.
+In this Tutorial, you have created a TREXIO file using the HDF5 back end and have written the number of atoms, point group, nuclear charges, labels and coordinates, which correspond to benzene molecule. You have also learned how to read this data back from the TREXIO file and how to handle some TREXIO errors.
