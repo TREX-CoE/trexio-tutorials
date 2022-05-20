@@ -105,7 +105,7 @@ det_list  = [
 ]
 ```
 
-**Note:** one determinant can be represented with `int64_num` integers per spin component as discussed above. The size is then doubled to accomodate both up-spin and down-spin (alpha and beta) electrons. The `det_num` value determines the total number of the CI determinants.
+**Note:** one determinant can be represented with `int64_num` integers per spin component as discussed above. The size is then doubled to accommodate both up-spin and down-spin (alpha and beta) electrons. The `det_num` value determines the total number of the CI determinants.
 
 The API for the determinants I/O is very similar to the one used for `sparse` quantities (e.g. `rdm_2e`). The key difference is that there is only one array of values to be passed as an argument (i.e. no need to provide the indices from the `sparse` data representation). The determinants I/O is performed in chunks (just like `sparse` data), which is why the API call expects also the file offset and the chunk size as input arguments.
 
@@ -231,9 +231,7 @@ def read_coefficients (state: int, offset_file: int, det_num: int) -> list:
         return coefficients
 ```
 
-We can now read the data in parallel using the built-in Python modules like `multiprocessing`. We would like to benchmark the performance by comparing the serial I/O _versus_ the parallel one using the built-in `time` module.
-
-Firstly, let's perform serial read `n_states` times:
+We can now read the data in parallel using the built-in Python modules like `multiprocessing`. Firstly, let's perform the serial reading:
 
 
 ```python
@@ -277,7 +275,7 @@ print(f'Parallel read, {n_states} states: done')
     Parallel read, 4 states: done
 
 
-Let's remove the produced file to clean some spack on the disk. However, feel free to comment the line below if you intend to analyse the output data manually (e.g. using the `h5dump` utility).
+Let's remove the produced file to clean the disk space. However, feel free to comment the line below if you intend to analyse the output data manually (e.g. using the `h5dump` utility).
 
 
 ```python
