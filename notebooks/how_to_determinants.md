@@ -133,7 +133,7 @@ for _ in range(n_chunks):
     Succesfully written 200000 determinants to file position 800000
 
 
-TREXIO API also provides functions to convert a given determinant into the list of occupied orbitals. This can be done either per spin component (`trexio.to_orbital_list`) or for both spin components simultaneously (`trexio.to_orbital_list_up_dn`) as follows:
+TREXIO API also provides functions to convert a given determinant into the list of occupied orbitals. This can be done either per spin component (`trexio.to_orbital_list`) or for both spin components simultaneously (`trexio.to_orbital_list_up_dn`). For example, taking the first determinant from the `det_list`, the conversion is performed as follows:
 
 
 ```python
@@ -151,14 +151,16 @@ print("Orbital list representation: \n", orb_list_up)
 ```
 
     Integer representation:      
-     [79, 1, 13]
+     [28, 63, 61]
     Binary  representation:      
-     ['0b1001111', '0b1', '0b1101']
+     ['0b11100', '0b111111', '0b111101']
     Orbital list representation: 
-     [  1   2   3   4   7  65 129 131 132]
+     [  3   4   5  65  66  67  68  69  70 129 131 132 133 134]
 
 
-**Reminder:** all arrays returned by the `trexio` Python API are, in fact, instances of the `numpy` array class called `ndarray`. Because of that, we use the procedure below to check that two orbital lists are identical. For the Python-ic lists, one can simply use the `assert list1 == list2` statement.
+**Reminder:** we use the `int64_num` to slice the `det_num[0]` list of integers since we represent a determinant using `int64_num` integer bit fields per spin component.
+
+**Note:** all arrays returned by the `trexio` Python API are, in fact, instances of the `numpy` array class called `ndarray`. Because of that, we use the procedure below to check that two orbital lists are identical. For the Python-ic lists, one can simply use the `assert list1 == list2` statement.
 
 
 ```python
@@ -177,11 +179,11 @@ demo_file.close()
 
 The CI calculation can be performed for ground and excited states. Thus, one might want to write/read these coefficients per state. The `trexio` API provides this functionality using the global state switch, which is controlled using the `trexio.set_state` function.
 
-Let's create an array of the CI coefficients. Again, we use arbitrary values in this tutorial. For the sake of simplicity, we will not use chinking for writing/reading the CI coefficients here.
+Let's create an array of the CI coefficients. Again, we use random values in this tutorial. For the sake of simplicity, we will not use chunking for writing/reading the CI coefficients here.
 
 
 ```python
-coefficients = [3.14 + float(i) for i in range(det_num)]
+coefficients = [(randint(1,100)-randint(1,100))/100 for _ in range(det_num)]
 ```
 
 Since we would like to perform an I/O for several states, we can prepare a bigger array containing CI coefficients for all states:
@@ -190,7 +192,7 @@ Since we would like to perform an I/O for several states, we can prepare a bigge
 ```python
 n_states = 4
 coefficients_all = [
-    [coefficients[i]*float(j+1) for i in range(len(coefficients))]
+    [coefficients[i]/float(j+1) for i in range(len(coefficients))]
     for j in range(n_states)
 ]
 ```
@@ -200,8 +202,8 @@ We can finally write the CI coefficients as follows:
 
 ```python
 offset_file = 0
-for s in range(n_states):
-    with trexio.File(FILENAME, mode='w', back_end=BACK_END) as demo_file:
+with trexio.File(FILENAME, mode='w', back_end=BACK_END) as demo_file:
+    for s in range(n_states):
         demo_file.set_state(s)
         trexio.write_determinant_coefficient(
             demo_file, offset_file, det_num, coefficients_all[s]
@@ -231,7 +233,7 @@ def read_coefficients (state: int, offset_file: int, det_num: int) -> list:
         return coefficients
 ```
 
-We can now read the data in parallel using the built-in Python modules like `multiprocessing`. Firstly, let's perform the serial reading:
+We can now read the data in parallel using the built-in Python modules like `multiprocessing`. Firstly, let's perform the serial reading: 
 
 
 ```python
@@ -242,7 +244,7 @@ coefficients_read_all = []
 
 for i in range(n_states):
     coefficients_read = read_coefficients(i, offset_file, det_num)
-    coefficients_read_all.append(coefficients)
+    coefficients_read_all.append(coefficients_read)
 
 print(f'Serial read, {n_states} states: done')
 ```
