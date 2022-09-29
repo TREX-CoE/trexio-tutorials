@@ -177,8 +177,6 @@ demo_file.close()
 
 ## Writing arrays of the CI coefficients in the TREXIO file
 
-The CI calculation can be performed for ground and excited states. Thus, one might want to write/read these coefficients per state. The `trexio` API provides this functionality using the global state switch, which is controlled using the `trexio.set_state` function.
-
 Let's create an array of the CI coefficients. Again, we use random values in this tutorial. For the sake of simplicity, we will not use chunking for writing/reading the CI coefficients here.
 
 
@@ -186,16 +184,6 @@ Let's create an array of the CI coefficients. Again, we use random values in thi
 coefficients = [(randint(1,100)-randint(1,100))/100 for _ in range(det_num)]
 ```
 
-Since we would like to perform an I/O for several states, we can prepare a bigger array containing CI coefficients for all states:
-
-
-```python
-n_states = 4
-coefficients_all = [
-    [coefficients[i]/float(j+1) for i in range(len(coefficients))]
-    for j in range(n_states)
-]
-```
 
 We can finally write the CI coefficients as follows:
 
@@ -203,81 +191,14 @@ We can finally write the CI coefficients as follows:
 ```python
 offset_file = 0
 with trexio.File(FILENAME, mode='w', back_end=BACK_END) as demo_file:
-    for s in range(n_states):
-        demo_file.set_state(s)
-        trexio.write_determinant_coefficient(
-            demo_file, offset_file, det_num, coefficients_all[s]
-        )
-        print(f'Succesfully written {det_num} coefficients for state {s}')
+    trexio.write_determinant_coefficient(demo_file, offset_file, det_num, coefficients)
+    print(f'Succesfully written {det_num} coefficients')
 ```
 
-    Succesfully written 1000000 coefficients for state 0
-    Succesfully written 1000000 coefficients for state 1
-    Succesfully written 1000000 coefficients for state 2
-    Succesfully written 1000000 coefficients for state 3
+    Succesfully written 1000000 coefficients
 
 
-## Reading the CI coefficients in serial and in parallel
-
-Now, let's prepare a separate function to read the determinant coefficients. You will see later how this function can facilitate the parallel I/O using the built-in Python functionalities. 
-
-
-```python
-def read_coefficients (state: int, offset_file: int, det_num: int) -> list:
-    with trexio.File(FILENAME, mode='r', back_end=BACK_END) as demo_file:
-        demo_file.set_state(state)
-        coefficients = trexio.read_determinant_coefficient(
-            demo_file, offset_file, det_num
-        )
-        #print(f'Succesfully read {det_num} coefficients for state {state}\n')
-        return coefficients
-```
-
-We can now read the data in parallel using the built-in Python modules like `multiprocessing`. Firstly, let's perform the serial reading: 
-
-
-```python
-# Serial run
-
-offset_file = 0
-coefficients_read_all = []
-
-for i in range(n_states):
-    coefficients_read = read_coefficients(i, offset_file, det_num)
-    coefficients_read_all.append(coefficients_read)
-
-print(f'Serial read, {n_states} states: done')
-```
-
-    Serial read, 4 states: done
-
-
-
-```python
-# Parallel (MPI-like) run
-from multiprocessing import Process
-
-jobs        = []
-offset_file = 0
-
-for s in range(n_states):
-    p = Process(
-        target=read_coefficients,
-        args=(s, offset_file, det_num)
-    )
-    jobs.append(p)
-    p.start()
-
-for j in jobs:
-    j.join()
-
-print(f'Parallel read, {n_states} states: done')
-```
-
-    Parallel read, 4 states: done
-
-
-Let's remove the produced file to clean the disk space. However, feel free to comment the line below if you intend to analyse the output data manually (e.g. using the `h5dump` utility).
+Let's remove the produced file to clean the disk space. However, feel free to comment the code below if you intend to analyse the output data manually (e.g. using the `h5dump` utility).
 
 
 ```python
@@ -286,4 +207,4 @@ remove_file(FILENAME)
 
 ## Conclusion
 
-In this Tutorial, you have created a TREXIO file using HDF5 back end and have written a number of molecular orbitals, a list of the CI determinants and CI coefficients for several states. You have also learned how to read this data back from the TREXIO file in serial and in parallel.
+In this Tutorial, you have created a TREXIO file using HDF5 back end and have written a number of molecular orbitals, a list of the CI determinants and CI coefficients. You have also learned how to read this data back from the TREXIO file.
